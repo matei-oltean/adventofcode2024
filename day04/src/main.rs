@@ -11,7 +11,7 @@ fn search_next(
     (x, y): (isize, isize),
     (dx, dy): (isize, isize),
     curr: char,
-    table: &Vec<Vec<char>>,
+    table: &[Vec<char>],
 ) -> bool {
     let (nx, ny) = (x + dx, y + dy);
     if nx < 0 || ny < 0 {
@@ -32,8 +32,7 @@ fn search_next(
     search_next((nx, ny), (dx, dy), next, table)
 }
 
-fn search_xmas(table: &Vec<Vec<char>>) -> u32 {
-    // generate all 8 possible directions.
+fn search_xmas(table: &[Vec<char>]) -> u32 {
     let dirs = [
         (1, 0),
         (0, 1),
@@ -62,6 +61,26 @@ fn search_xmas(table: &Vec<Vec<char>>) -> u32 {
     count
 }
 
+fn count_crosses(table: &[Vec<char>]) -> usize {
+    let mut count = 0;
+    for i in 1..table.len() - 1 {
+        for j in 1..table[0].len() - 1 {
+            if table[i][j] == 'A' {
+                let first = [table[i - 1][j - 1], table[i + 1][j + 1]]
+                    .iter()
+                    .collect::<String>();
+                let second = [table[i - 1][j + 1], table[i + 1][j - 1]]
+                    .iter()
+                    .collect::<String>();
+                if (first == "MS" || first == "SM") && (second == "MS" || second == "SM") {
+                    count += 1;
+                }
+            }
+        }
+    }
+    count
+}
+
 fn main() {
     let input = std::fs::read_to_string("./input/04")
         .unwrap()
@@ -69,4 +88,5 @@ fn main() {
         .map(|line| line.chars().collect::<Vec<char>>())
         .collect::<Vec<Vec<char>>>();
     println!("Result: {}", search_xmas(&input));
+    println!("Result: {}", count_crosses(&input));
 }
