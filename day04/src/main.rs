@@ -2,8 +2,7 @@ fn next_letter(c: char) -> char {
     match c {
         'X' => 'M',
         'M' => 'A',
-        'A' => 'S',
-        _ => 'X',
+        _ => 'S',
     }
 }
 
@@ -23,13 +22,10 @@ fn search_next(
         return false;
     }
     let next = next_letter(curr);
-    if table[ix][iy] != next_letter(curr) {
+    if table[ix][iy] != next {
         return false;
     }
-    if next == 'S' {
-        return true;
-    }
-    search_next((nx, ny), (dx, dy), next, table)
+    next == 'S' || search_next((nx, ny), (dx, dy), next, table)
 }
 
 fn search_xmas(table: &[Vec<char>]) -> u32 {
@@ -65,16 +61,17 @@ fn count_crosses(table: &[Vec<char>]) -> usize {
     let mut count = 0;
     for i in 1..table.len() - 1 {
         for j in 1..table[0].len() - 1 {
-            if table[i][j] == 'A' {
-                let first = [table[i - 1][j - 1], table[i + 1][j + 1]]
-                    .iter()
-                    .collect::<String>();
-                let second = [table[i - 1][j + 1], table[i + 1][j - 1]]
-                    .iter()
-                    .collect::<String>();
-                if (first == "MS" || first == "SM") && (second == "MS" || second == "SM") {
-                    count += 1;
-                }
+            if table[i][j] != 'A' {
+                continue;
+            }
+            let first = [table[i - 1][j - 1], table[i + 1][j + 1]]
+                .iter()
+                .collect::<String>();
+            let second = [table[i - 1][j + 1], table[i + 1][j - 1]]
+                .iter()
+                .collect::<String>();
+            if (first == "MS" || first == "SM") && (second == "MS" || second == "SM") {
+                count += 1;
             }
         }
     }
